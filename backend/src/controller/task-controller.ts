@@ -69,4 +69,21 @@ export class TaskController {
       next(err);
     }
   }
+
+  static async remove(req: RequestModel, res: Response, next: NextFunction) {
+    try {
+      const request: RemoveTaskRequest = {
+        user_id: req.user_id!,
+        id: req.params.id,
+      };
+
+      const result: SuccessResponse<TaskResponse> = await TaskService.remove(
+        request
+      );
+
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

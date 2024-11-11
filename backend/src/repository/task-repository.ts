@@ -106,4 +106,23 @@ export class TaskRepository {
       },
     });
   }
+
+  static async remove(req: RemoveTaskRequest): Promise<TaskResponse> {
+    return prismaClient.task.delete({
+      where: {
+        user_id: req.user_id,
+        id: req.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        date: true,
+        is_completed: true,
+        is_important: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+  }
 }

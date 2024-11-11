@@ -26,5 +26,6 @@ app.use(authMiddleware);
 app.post("/api/tasks", TaskController.create);
 app.get("/api/tasks", TaskController.getAll);
 app.put("/api/tasks/:id", TaskController.update);
+app.delete("/api/tasks/:id", TaskController.remove);
 
 app.use(errorMiddleware);

@@ -101,4 +101,14 @@ export class TaskService {
 
     return toTaskResponse(task, "successfully updated task");
   }
+
+  static async remove(
+    req: RemoveTaskRequest
+  ): Promise<SuccessResponse<TaskResponse>> {
+    await this.isTaskExists(req.user_id, req.id);
+
+    const task = await TaskRepository.remove(req);
+
+    return toTaskResponse(task, "successfully deleted task");
+  }
 }

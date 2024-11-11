@@ -320,3 +320,54 @@ describe("PUT /api/tasks/:id", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 });
+
+describe("DELETE /api/tasks/:id", () => {
+  beforeEach(async () => {
+    await createTask();
+  });
+
+  it("should can remove tasks", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .delete(`/api/tasks/${taskId}`)
+      .set("Authorization", await getBearerToken());
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully deleted task");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data.title).toBe("test");
+    expect(response.body.data.description).toBe("test");
+    expect(response.body.data.date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data.is_completed).toBeFalsy();
+    expect(response.body.data.is_important).toBeFalsy();
+    expect(response.body.data.created_at).toBeDefined();
+    expect(response.body.data.updated_at).toBeDefined();
+  });
+
+  it("should reject if task is not found", async () => {
+    const response = await request(app)
+      .delete(`/api/tasks/not found`)
+      .set("Authorization", await getBearerToken());
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.message).toBe("task is not found");
+  });
+
+  it("should reject if authorization is wrong", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .delete(`/api/tasks/${taskId}`)
+      .set("Authorization", "wrong");
+
+    expect(response.status).toBe(401);
+    expect(response.body.code).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
