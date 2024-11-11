@@ -41,6 +41,12 @@ export type RemoveTaskRequest = {
   id: string;
 };
 
+export type UpdateStatusTaksRequest = {
+  user_id: string;
+  id: string;
+  is_completed: boolean;
+};
+
 export function toTaskResponse(
   task: TaskResponse,
   message: string

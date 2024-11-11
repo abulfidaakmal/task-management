@@ -4,6 +4,7 @@ import {
   GetAllTaskRequest,
   RemoveTaskRequest,
   TaskResponse,
+  UpdateStatusTaksRequest,
   UpdateTaskRequest,
 } from "../model/task-model";
 import useFakeTimers = jest.useFakeTimers;
@@ -112,6 +113,30 @@ export class TaskRepository {
       where: {
         user_id: req.user_id,
         id: req.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        date: true,
+        is_completed: true,
+        is_important: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+  }
+
+  static async updateStatus(
+    req: UpdateStatusTaksRequest
+  ): Promise<TaskResponse> {
+    return prismaClient.task.update({
+      where: {
+        user_id: req.user_id,
+        id: req.id,
+      },
+      data: {
+        is_completed: req.is_completed,
       },
       select: {
         id: true,

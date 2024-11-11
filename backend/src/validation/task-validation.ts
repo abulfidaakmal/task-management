@@ -25,4 +25,10 @@ export class TaskValidation {
     date: z.coerce.date().min(new Date(new Date().setHours(0, 0, 0, 0))),
     is_important: z.boolean().default(false),
   });
+
+  static readonly UPDATE_STATUS: ZodType = z.object({
+    user_id: z.string(),
+    id: z.string(),
+    is_completed: z.boolean(),
+  });
 }

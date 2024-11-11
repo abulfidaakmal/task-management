@@ -4,6 +4,7 @@ import {
   RemoveTaskRequest,
   TaskResponse,
   toTaskResponse,
+  UpdateStatusTaksRequest,
   UpdateTaskRequest,
 } from "../model/task-model";
 import { Validation } from "../validation/validation";
@@ -110,5 +111,20 @@ export class TaskService {
     const task = await TaskRepository.remove(req);
 
     return toTaskResponse(task, "successfully deleted task");
+  }
+
+  static async updateStatus(
+    req: UpdateStatusTaksRequest
+  ): Promise<SuccessResponse<TaskResponse>> {
+    const updateRequest: UpdateStatusTaksRequest = Validation.validate(
+      TaskValidation.UPDATE_STATUS,
+      req
+    );
+
+    await this.isTaskExists(updateRequest.user_id, updateRequest.id);
+
+    const task = await TaskRepository.updateStatus(req);
+
+    return toTaskResponse(task, "successfully updated status task");
   }
 }

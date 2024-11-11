@@ -371,3 +371,79 @@ describe("DELETE /api/tasks/:id", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 });
+
+describe("PATCH /api/tasks/:id", () => {
+  beforeEach(async () => {
+    await createTask();
+  });
+
+  it("should can update status tasks", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .patch(`/api/tasks/${taskId}`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        is_completed: true,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully updated status task");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data.title).toBe("test");
+    expect(response.body.data.description).toBe("test");
+    expect(response.body.data.date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data.is_completed).toBeTruthy();
+    expect(response.body.data.is_important).toBeFalsy();
+    expect(response.body.data.created_at).toBeDefined();
+    expect(response.body.data.updated_at).toBeDefined();
+  });
+
+  it("should reject if task is not found", async () => {
+    const response = await request(app)
+      .patch(`/api/tasks/not found`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        is_completed: true,
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.message).toBe("task is not found");
+  });
+
+  it("should reject if request is not valid", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .patch(`/api/tasks/${taskId}`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        is_completed: "wrong",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe(400);
+    expect(response.body.message).toBe("Validation error");
+    expect(response.body.details).toBeDefined();
+  });
+
+  it("should reject if authorization is wrong", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .patch(`/api/tasks/${taskId}`)
+      .set("Authorization", "wrong")
+      .send({
+        is_completed: true,
+      });
+
+    expect(response.status).toBe(401);
+    expect(response.body.code).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
