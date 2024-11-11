@@ -24,5 +24,6 @@ app.use(
 app.use(authMiddleware);
 
 app.post("/api/tasks", TaskController.create);
+app.get("/api/tasks", TaskController.getAll);
 
 app.use(errorMiddleware);

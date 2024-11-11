@@ -8,4 +8,12 @@ export class TaskValidation {
     date: z.coerce.date().min(new Date(new Date().setHours(0, 0, 0, 0))),
     is_important: z.boolean().default(false),
   });
+
+  static readonly GETALL: ZodType = z.object({
+    user_id: z.string(),
+    is_important: z.coerce.boolean().optional(),
+    is_completed: z.coerce.boolean().optional(),
+    page: z.coerce.number().min(1).optional(),
+    size: z.coerce.number().min(1).max(60).optional(),
+  });
 }

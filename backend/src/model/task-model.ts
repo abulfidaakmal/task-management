@@ -19,6 +19,14 @@ export type CreateTaskRequest = {
   is_important: boolean;
 };
 
+export type GetAllTaskRequest = {
+  user_id: string;
+  is_important?: boolean;
+  is_completed?: boolean;
+  page: number;
+  size: number;
+};
+
 export function toTaskResponse(
   task: TaskResponse,
   message: string

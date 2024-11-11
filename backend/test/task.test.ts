@@ -85,3 +85,145 @@ describe("POST /api/tasks", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 });
+
+describe("GET /api/tasks", () => {
+  beforeEach(async () => {
+    await createTask();
+  });
+
+  it("should can get all tasks", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken());
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully get all tasks");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data[0].id).toBeDefined();
+    expect(response.body.data[0].title).toBe("test");
+    expect(response.body.data[0].description).toBe("test");
+    expect(response.body.data[0].date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data[0].is_completed).toBeFalsy();
+    expect(response.body.data[0].is_important).toBeFalsy();
+    expect(response.body.data[0].created_at).toBeDefined();
+    expect(response.body.data[0].updated_at).toBeDefined();
+    expect(response.body.paging.page).toBe(1);
+    expect(response.body.paging.size).toBe(20);
+    expect(response.body.paging.total_data).toBe(1);
+    expect(response.body.paging.total_page).toBe(1);
+  });
+
+  it("should can get all tasks using paging", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken())
+      .query({
+        page: 1,
+        size: 1,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully get all tasks");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data[0].id).toBeDefined();
+    expect(response.body.data[0].title).toBe("test");
+    expect(response.body.data[0].description).toBe("test");
+    expect(response.body.data[0].date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data[0].is_completed).toBeFalsy();
+    expect(response.body.data[0].is_important).toBeFalsy();
+    expect(response.body.data[0].created_at).toBeDefined();
+    expect(response.body.data[0].updated_at).toBeDefined();
+  });
+
+  it("should can get all tasks using is_important", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken())
+      .query({
+        is_important: false,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully get all tasks");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data[0].id).toBeDefined();
+    expect(response.body.data[0].title).toBe("test");
+    expect(response.body.data[0].description).toBe("test");
+    expect(response.body.data[0].date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data[0].is_completed).toBeFalsy();
+    expect(response.body.data[0].is_important).toBeFalsy();
+    expect(response.body.data[0].created_at).toBeDefined();
+    expect(response.body.data[0].updated_at).toBeDefined();
+  });
+
+  it("should can get all tasks using is_completed", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken())
+      .query({
+        is_completed: false,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully get all tasks");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data[0].id).toBeDefined();
+    expect(response.body.data[0].title).toBe("test");
+    expect(response.body.data[0].description).toBe("test");
+    expect(response.body.data[0].date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data[0].is_completed).toBeFalsy();
+    expect(response.body.data[0].is_important).toBeFalsy();
+    expect(response.body.data[0].created_at).toBeDefined();
+    expect(response.body.data[0].updated_at).toBeDefined();
+  });
+
+  it("should reject if request is not valid", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken())
+      .query({
+        page: -1,
+        size: 1000,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe(400);
+    expect(response.body.message).toBe("Validation error");
+    expect(response.body.details).toBeDefined();
+  });
+
+  it("should reject if no tasks available", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", await getBearerToken())
+      .query({
+        is_completed: true,
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.message).toBe("no tasks available");
+  });
+
+  it("should reject if authorization is wrong", async () => {
+    const response = await request(app)
+      .get("/api/tasks")
+      .set("Authorization", "wrong");
+
+    expect(response.status).toBe(401);
+    expect(response.body.code).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
