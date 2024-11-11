@@ -72,4 +72,38 @@ export class TaskRepository {
       take: req.size,
     });
   }
+
+  static async isTaskExists(user_id: string, id: string): Promise<number> {
+    return prismaClient.task.count({
+      where: {
+        user_id: user_id,
+        id: id,
+      },
+    });
+  }
+
+  static async update(req: UpdateTaskRequest): Promise<TaskResponse> {
+    return prismaClient.task.update({
+      where: {
+        user_id: req.user_id,
+        id: req.id,
+      },
+      data: {
+        title: req.title,
+        description: req.description,
+        date: req.date,
+        is_important: req.is_important,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        date: true,
+        is_completed: true,
+        is_important: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+  }
 }

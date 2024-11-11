@@ -30,3 +30,16 @@ export const createTask = async () => {
     },
   });
 };
+
+export const getTaskId = async () => {
+  const task = await prismaClient.task.findFirst({
+    where: {
+      user_id: user_id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return task?.id;
+};

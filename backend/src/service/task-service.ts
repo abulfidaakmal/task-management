@@ -86,4 +86,19 @@ export class TaskService {
       },
     };
   }
+
+  static async update(
+    req: UpdateTaskRequest
+  ): Promise<SuccessResponse<TaskResponse>> {
+    const updateRequest: UpdateTaskRequest = Validation.validate(
+      TaskValidation.UPDATE,
+      req
+    );
+
+    await this.isTaskExists(updateRequest.user_id, updateRequest.id);
+
+    const task = await TaskRepository.update(updateRequest);
+
+    return toTaskResponse(task, "successfully updated task");
+  }
 }

@@ -1,6 +1,11 @@
 import request from "supertest";
 import { app } from "../src/application/app";
-import { createTask, getBearerToken, removeAllTask } from "./test.utils";
+import {
+  createTask,
+  getBearerToken,
+  getTaskId,
+  removeAllTask,
+} from "./test.utils";
 
 afterEach(async function () {
   await removeAllTask();
@@ -221,6 +226,94 @@ describe("GET /api/tasks", () => {
     const response = await request(app)
       .get("/api/tasks")
       .set("Authorization", "wrong");
+
+    expect(response.status).toBe(401);
+    expect(response.body.code).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
+
+describe("PUT /api/tasks/:id", () => {
+  beforeEach(async () => {
+    await createTask();
+  });
+
+  it("should can update tasks", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .put(`/api/tasks/${taskId}`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        title: "test",
+        description: "example",
+        date: new Date().toString(),
+        is_important: false,
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBeTruthy();
+    expect(response.body.message).toBe("successfully updated task");
+    expect(response.body.error).toBeNull();
+    expect(response.body.data.id).toBeDefined();
+    expect(response.body.data.title).toBe("test");
+    expect(response.body.data.description).toBe("example");
+    expect(response.body.data.date).toContain(
+      new Date().toISOString().split("T")[0]
+    );
+    expect(response.body.data.is_completed).toBeFalsy();
+    expect(response.body.data.is_important).toBeFalsy();
+    expect(response.body.data.created_at).toBeDefined();
+    expect(response.body.data.updated_at).toBeDefined();
+  });
+
+  it("should reject if task is not found", async () => {
+    const response = await request(app)
+      .put(`/api/tasks/not found`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        title: "test",
+        description: "example",
+        date: new Date().toString(),
+        is_important: false,
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.message).toBe("task is not found");
+  });
+
+  it("should reject if request is not valid", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .put(`/api/tasks/${taskId}`)
+      .set("Authorization", await getBearerToken())
+      .send({
+        title: "",
+        description: "",
+        date: "wrong",
+        is_important: "wrong",
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe(400);
+    expect(response.body.message).toBe("Validation error");
+    expect(response.body.details).toBeDefined();
+  });
+
+  it("should reject if authorization is wrong", async () => {
+    const taskId = await getTaskId();
+
+    const response = await request(app)
+      .put(`/api/tasks/${taskId}`)
+      .set("Authorization", "wrong")
+      .send({
+        title: "test",
+        description: "example",
+        date: new Date().toString(),
+        is_important: false,
+      });
 
     expect(response.status).toBe(401);
     expect(response.body.code).toBe(401);

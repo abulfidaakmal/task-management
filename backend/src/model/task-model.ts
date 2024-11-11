@@ -27,6 +27,15 @@ export type GetAllTaskRequest = {
   size: number;
 };
 
+export type UpdateTaskRequest = {
+  user_id: string;
+  id: string;
+  title: string;
+  description?: string | null;
+  date: Date;
+  is_important: boolean;
+};
+
 export function toTaskResponse(
   task: TaskResponse,
   message: string

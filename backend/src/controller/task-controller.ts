@@ -51,4 +51,22 @@ export class TaskController {
       next(err);
     }
   }
+
+  static async update(req: RequestModel, res: Response, next: NextFunction) {
+    try {
+      const request: UpdateTaskRequest = {
+        user_id: req.user_id!,
+        id: req.params.id,
+        ...req.body,
+      };
+
+      const result: SuccessResponse<TaskResponse> = await TaskService.update(
+        request
+      );
+
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
