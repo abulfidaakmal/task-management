@@ -6,7 +6,7 @@ export class TaskValidation {
     title: z.string().trim().max(100).min(1),
     description: z.string().trim().optional(),
     date: z.coerce.date().min(new Date(new Date().setHours(0, 0, 0, 0))),
-    is_important: z.boolean().default(false),
+    is_important: z.coerce.boolean().default(false),
   });
 
   static readonly GETALL: ZodType = z.object({
@@ -23,12 +23,12 @@ export class TaskValidation {
     title: z.string().trim().max(100).min(1),
     description: z.string().trim().optional(),
     date: z.coerce.date().min(new Date(new Date().setHours(0, 0, 0, 0))),
-    is_important: z.boolean().default(false),
+    is_important: z.coerce.boolean().default(false),
   });
 
   static readonly UPDATE_STATUS: ZodType = z.object({
     user_id: z.string(),
     id: z.string(),
-    is_completed: z.boolean(),
+    is_completed: z.coerce.boolean(),
   });
 }
