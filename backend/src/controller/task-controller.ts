@@ -39,8 +39,8 @@ export class TaskController {
         is_completed: req.query.is_completed
           ? req.query.is_completed === "true"
           : undefined,
-        size: Number(req.query.page) || 20,
-        page: Number(req.query.page) || 1,
+        size: Number(req.query.size) || 20,
+        page: Number(req.query.page) > 0 ? Number(req.query.page) : 1,
       };
 
       const result: SuccessResponse<TaskResponse[]> = await TaskService.getAll(
