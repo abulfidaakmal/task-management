@@ -4,6 +4,7 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import Sidebar from "./components/Sidebar";
 import HomePage from "./pages/HomePage";
+import CompletedPage from "./pages/CompletedPage";
 
 function App() {
   const { isSignedIn } = useUser();
@@ -19,6 +20,7 @@ function App() {
       <Route path="/sign-up" element={<SignUpPage />} />
       <Route element={<Sidebar />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/completed" element={<CompletedPage />} />
       </Route>
     </Routes>
   );
