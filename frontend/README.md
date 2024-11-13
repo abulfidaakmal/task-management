@@ -1,8 +1,40 @@
-# React + Vite
+## Getting Started
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Installation
 
-Currently, two official plugins are available:
+1. **Navigate to the backend directory**:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   bun install
+   ```
+
+3. **Configure Environment Variables**:
+   Create a `.env` file and add the following environment variables:
+
+   ```plaintext
+   VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   VITE_API_URL=your_backend_api_url
+   ```
+
+4. **Start the Development Server with Vite**:
+
+   ```bash
+   bun run dev
+   ```
+
+5. **Build the Project (for production)**:
+
+   ```bash
+   bun run build
+   ```
+
+6. **Preview the Production Build**:
+   ```bash
+   bun run preview
+   ```
